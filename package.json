@@ -10,7 +10,13 @@
     "build": "node build/build.js"
   },
   "dependencies": {
-    "vue": "^2.5.2",
+    "apollo-boost": "^0.4.3",
+    "bootstrap": "^4.3.1",
+    "bootstrap-vue": "^2.0.0-rc.26",
+    "graphql": "^14.4.2",
+    "material-design-icons-iconfont": "^5.0.1",
+    "vue": "^2.6.10",
+    "vue-apollo": "^3.0.0-rc.1",
     "vue-router": "^3.0.1",
     "vuetify": "^1.5.16"
   },
