@@ -126,23 +126,6 @@ export default {
 </script>
 
 <style >
-input {
-  margin: 10px auto;
-}
+@import "../../css/header.css"
 
-.input.inValid input {
-  border: 1px solid #a94442;
-}
-
-.input.inValid span {
-  color: 1px solid #a94442;
-}
-
-.input.inValid label {
-  color: 1px solid rgb(255, 0, 0);
-}
-
-#main-btn {
-  text-align: center;
-}
 </style>
