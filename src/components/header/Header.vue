@@ -16,7 +16,7 @@
               type="email" 
               id = "email"
               v-model="email"
-              @blur="$v.email.touch()"/>
+              @blur="$v.email.$touch()"/>
         <span v-if="!$v.email.required">email is required</span>
         <span v-if="!$v.email.email">Please provide the valid email address.</span>
       </div>
@@ -27,45 +27,34 @@
               type="tel" 
               id = "phoneNumber"
               v-model="phoneNumber"
-              @blur="$v.phoneNumber.touch()"/>
+              @blur="$v.phoneNumber.$touch()"/>
         <span v-if="!$v.phoneNumber.required">phoneNumber is required</span>
         <span v-if="!$v.phoneNumber.minLength">phoneNumber must be atleast {{$v.phoneNumber.$params.minLength.min}} digit.</span>
-        <span v-if="!$v.phoneNumber.number">phoneNumber should contain only numbers.</span>
       </div>
       <br />
-      <div class = "input" :class = "{inValid : $v.gender.$error}">
-        <label>Gender:*</label>
-        <input 
-              type="checkbox"
-              id = "gender"
-              v-model="gender" 
-              @blur="$v.gender.touch()"/>
-        <span v-if="!$v.gender.required">gender is required</span>
-      </div>
-      <br />
-      <div class = "input" :class = "{inValid : $v.password.$error}">
+        <div class = "input" :class = "{inValid : $v.password.$error}">
         <label>Password:*</label>
         <input 
               type="password" 
               id = "password"
               v-model="password"
-              @blur="$v.password.touch()"/>
+              @blur="$v.password.$touch()"/>
         <span v-if="!$v.password.required">password is required</span>
         <span v-if="!$v.password.minLength">password length must be atleast {{$v.password.$params.minLength.min}}</span>
       </div>
       <br />
       <div class = "input" :class = "{inValid : $v.confirmPassword.$error}">
-        <label>Password:*</label>
+        <label>Confirm Password:*</label>
         <input 
               type="password" 
               id = "confirmPassword"
-              v-model="password"
-              @blur="$v.confirmPassword.touch()"/>
+              v-model="confirmPassword"
+              @blur="$v.confirmPassword.$touch()"/>
         <span v-if="!$v.confirmPassword.required">confirm Password is required</span>
         <span v-if="!$v.confirmPassword.sameAs">entered password should match.</span>
       </div>
-      <br />
-      <button slot="btn" id="main-btn">Sign Up</button>
+      <hr/>
+      <button class = "btn btn-primary" slot="btn" id="main-btn">Sign Up</button>
     </SignUpModal>
     <v-toolbar dark>
       <v-toolbar-title>Logo Image</v-toolbar-title>
@@ -85,7 +74,6 @@
 import {
   required,
   email,
-  number,
   sameAs,
   minLength
 } from "vuelidate/lib/validators";
@@ -106,7 +94,6 @@ export default {
     },
     phoneNumber: {
       required,
-      number,
       minLength: minLength(10)
     },
     password: {
