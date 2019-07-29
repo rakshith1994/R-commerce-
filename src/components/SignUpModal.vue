@@ -3,7 +3,6 @@
     <!-- <b-button v-b-modal.modal-center >{{title}}</b-button> -->
     <b-modal id="modal-center-signup" hide-footer  centered title='Sign Up'>
     <slot></slot>
-    <slot name="btn"></slot>
   </b-modal>
 </div> 
 </template>
