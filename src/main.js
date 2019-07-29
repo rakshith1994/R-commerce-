@@ -16,7 +16,7 @@ import SignUpModal from './components/SignUpModal'
 
 const apolloClient = new ApolloClient({
   // You should use an absolute URL here
-  uri: 'https://api.graphcms.com/simple/v1/awesomeTalksClone'
+  uri: 'http://localhost:3000/graphql'
 });
 
 const apolloProvider = new VueApollo({
