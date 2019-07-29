@@ -1,38 +1,60 @@
 <template>
   <div>
     <SignInModal>
-      <label>Email Id:*</label>
-      <input name="email" class="form-control" type="email" />
-      <br />
-      <label>Password:*</label>
-      <input name="password" class="form-control" type="password" />
+      <form @submit.prevent = "login">
+        <div class = "input" :class = "{inValid: $v.loginEmail.$error}">
+          <label >Email Id:*</label>
+          <input 
+                name="email" 
+                class="form-control" 
+                type="email"
+                v-model="loginEmail"
+                @blur="$v.loginEmail.$touch()"
+                />
+            <span class = "error_message" v-if="!$v.loginEmail.email">Please provide the valid email address.</span>
+            <span class = "error_message" v-if="!$v.loginEmail.required">email is required</span>
+          </div>
+          <br />
+          <div class = "input" :class = "{inValid: $v.loginPassword.$error}">
+          <label >Password:*</label>
+          <input 
+                name="password" 
+                class="form-control" 
+                type="password"
+                v-model="loginPassword"
+                @blur="$v.loginPassword.$touch()"
+                />
+          <span class = "error_message"  v-if="!$v.loginPassword.required">password is required</span>
+          <span class = "error_message"  v-if="!$v.loginPassword.minLength">password length must be atleast {{$v.loginPassword.$params.minLength.min}}</span>
+        </div>
       <hr/>
       <button class = "btn btn-primary">Sign In</button>
+      </form>
     </SignInModal>
     <SignUpModal>
       <form @submit.prevent = "submitSignUpForm">
         <div class = "input" :class = "{inValid: $v.email.$error}">
-          <span :class = "{inValid: $v.email.$error}">Email Id:*</span>
+          <label :class = "{error_message: $v.email.$error}">Email Id:*</label>
           <input 
                 type="email" 
                 class="form-control"
                 id = "email"
                 v-model="email"
                 @blur="$v.email.$touch()"/>
-          <span v-if="!$v.email.email">Please provide the valid email address.</span>
-          <span v-if="!$v.email.required">email is required</span>
+          <span class = "error_message" v-if="!$v.email.email">Please provide the valid email address.</span>
+          <span class = "error_message" v-if="!$v.email.required">email is required</span>
         </div>
         <br />
         <div class = "input" :class = "{inValid : $v.phoneNumber.$error}">
-          <label>Mobile Number:*</label>
+          <label :class = "{error_message: $v.phoneNumber.$error}">Mobile Number:*</label>
           <input 
                 type="tel" 
                 class="form-control"
                 id = "phoneNumber"
                 v-model="phoneNumber"
                 @blur="$v.phoneNumber.$touch()"/>
-          <span v-if="!$v.phoneNumber.required">phoneNumber is required</span>
-          <span v-if="!$v.phoneNumber.minLength">phoneNumber must be atleast {{$v.phoneNumber.$params.minLength.min}} digit.</span>
+          <span class = "error_message"  v-if="!$v.phoneNumber.required">phoneNumber is required</span>
+          <span class = "error_message"  v-if="!$v.phoneNumber.minLength">phoneNumber must be atleast {{$v.phoneNumber.$params.minLength.min}} digit.</span>
         </div>
         <br />
         <div class = "input">
@@ -52,42 +74,36 @@
           </div>
         <br />
           <div class = "input" :class = "{inValid : $v.password.$error}">
-          <label>Password:*</label>
+          <label :class = "{error_message: $v.password.$error}">Password:*</label>
           <input 
                 type="password" 
                 class="form-control"
                 id = "password"
                 v-model="password"
                 @blur="$v.password.$touch()"/>
-          <span v-if="!$v.password.required">password is required</span>
-          <span v-if="!$v.password.minLength">password length must be atleast {{$v.password.$params.minLength.min}}</span>
+          <span class = "error_message"  v-if="!$v.password.required">password is required</span>
+          <span class = "error_message"  v-if="!$v.password.minLength">password length must be atleast {{$v.password.$params.minLength.min}}</span>
         </div>
         <br />
         <div class = "input" :class = "{inValid : $v.confirmPassword.$error}">
-          <label>Confirm Password:*</label>
+          <label :class = "{error_message: $v.confirmPassword.$error}">Confirm Password:*</label>
           <input 
                 type="password" 
                 class="form-control"
                 id = "confirmPassword"
                 v-model="confirmPassword"
                 @blur="$v.confirmPassword.$touch()"/>
-          <span v-if="!$v.confirmPassword.required">confirm Password is required</span>
-          <span v-if="!$v.confirmPassword.sameAs">entered password should match.</span>
+          <span class = "error_message"  v-if="!$v.confirmPassword.required">confirm Password is required</span>
+          <span class = "error_message"  v-if="!$v.confirmPassword.sameAs">entered password should match.</span>
         </div>
         <hr/>
         <button class = "btn btn-primary" slot="btn" id="main-btn">Sign Up</button>
         <v-snackbar
             v-model="snackbar"
             :multi-line="multiLine"
+            :timeout= 5000
           >
           Hola! SignUp SuccessFull.
-            <v-btn
-              color="red"
-              text
-              @click="snackbar = false"
-            >
-              Close
-            </v-btn>
         </v-snackbar>
       </form>
     </SignUpModal>
@@ -123,6 +139,8 @@ export default {
       isSubmitted : false,
       multiLine: true,
       snackbar: false,
+      loginEmail:'',
+      loginPassword : ''
     };
   },
   validations: {
@@ -139,7 +157,14 @@ export default {
       minLength: minLength(6)
     },
     confirmPassword: {
+      required,
       sameAs: sameAs("password")
+    },
+    loginEmail : {
+      required
+    },
+    loginPassword : {
+      required
     }
   },
   methods: {
@@ -150,20 +175,34 @@ export default {
       console.log('$v>>>>>>',this.$v);
       this.isSubmitted = true;
       if (!this.$v.$invalid) {
+        // this.$bvModal.hide('modal-center-signup');
         this.snackbar = true;
+        this.$v.$reset();
       }else{
         this.$v.$touch();
       }
+    },
+    login() {
+      if (!this.$v.$invalid) {
+        // this.$bvModal.hide('modal-center-signup');
+        this.snackbar = true;
+        this.$v.$reset();
+      }else{
+          this.$v.$touch();
+        }
     }
   }
 };
 </script>
 
 <style >
-  input {
-    margin: 10px auto;
+  body{
+    font-family: monospace
   }
   
+  .error_message{
+    color : #a94442;
+  }
   .input.inValid input {
     border: 1px solid #a94442;
   }
