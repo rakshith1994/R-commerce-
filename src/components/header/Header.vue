@@ -25,14 +25,35 @@
                 @blur="$v.loginPassword.$touch()"
                 />
           <span class = "error_message"  v-if="!$v.loginPassword.required">password is required</span>
-          <span class = "error_message"  v-if="!$v.loginPassword.minLength">password length must be atleast {{$v.loginPassword.$params.minLength.min}}</span>
         </div>
       <hr/>
-      <button class = "btn btn-primary">Sign In</button>
+      <button class = "btn btn-primary" :disabled="$v.$invalid">Sign In</button>
       </form>
     </SignInModal>
     <SignUpModal>
       <form @submit.prevent = "submitSignUpForm">
+        <div class = "input" :class = "{inValid: $v.firstName.$error}">
+          <label :class = "{error_message: $v.firstName.$error}">First Name:*</label>
+          <input 
+                type="firstName" 
+                class="form-control"
+                id = "firstName"
+                v-model.trim="firstName"
+                @blur="$v.firstName.$touch()"/>
+          <span class = "error_message" v-if="!$v.firstName.required">First Name must not be empty</span>
+        </div>
+        <br/>
+        <div class = "input" :class = "{inValid: $v.lastName.$error}">
+          <label :class = "{error_message: $v.lastName.$error}">Last Name:*</label>
+          <input 
+                type="lastName" 
+                class="form-control"
+                id = "lastName"
+                v-model.trim="lastName"
+                @blur="$v.lastName.$touch()"/>
+          <span class = "error_message" v-if="!$v.firstName.required">Last Name must not be empty</span>
+        </div>
+        <br/>
         <div class = "input" :class = "{inValid: $v.email.$error}">
           <label :class = "{error_message: $v.email.$error}">Email Id:*</label>
           <input 
@@ -42,7 +63,7 @@
                 v-model="email"
                 @blur="$v.email.$touch()"/>
           <span class = "error_message" v-if="!$v.email.email">Please provide the valid email address.</span>
-          <span class = "error_message" v-if="!$v.email.required">email is required</span>
+          <span class = "error_message" v-if="!$v.email.required">Email must not be empty</span>
         </div>
         <br />
         <div class = "input" :class = "{inValid : $v.phoneNumber.$error}">
@@ -53,21 +74,20 @@
                 id = "phoneNumber"
                 v-model="phoneNumber"
                 @blur="$v.phoneNumber.$touch()"/>
-          <span class = "error_message"  v-if="!$v.phoneNumber.required">phoneNumber is required</span>
-          <span class = "error_message"  v-if="!$v.phoneNumber.minLength">phoneNumber must be atleast {{$v.phoneNumber.$params.minLength.min}} digit.</span>
+          <span class = "error_message"  v-if="!$v.phoneNumber.required">phone Number must not be empty</span>
         </div>
         <br />
         <div class = "input">
           <label>Gender:</label>
                   <input 
                 type="checkbox" 
-                id = "gender"
+                id = "male"
                 v-model="gender"
                 value = "Male"
                 /><label for="john">Male</label>
           <input 
                 type="checkbox" 
-                id = "gender"
+                id = "female"
                 v-model="gender"
                 value = "Female"
                 /><label for="john">Female</label>
@@ -81,7 +101,7 @@
                 id = "password"
                 v-model="password"
                 @blur="$v.password.$touch()"/>
-          <span class = "error_message"  v-if="!$v.password.required">password is required</span>
+          <span class = "error_message"  v-if="!$v.password.required">Password must not be empty</span>
           <span class = "error_message"  v-if="!$v.password.minLength">password length must be atleast {{$v.password.$params.minLength.min}}</span>
         </div>
         <br />
@@ -93,11 +113,11 @@
                 id = "confirmPassword"
                 v-model="confirmPassword"
                 @blur="$v.confirmPassword.$touch()"/>
-          <span class = "error_message"  v-if="!$v.confirmPassword.required">confirm Password is required</span>
+          <span class = "error_message"  v-if="!$v.confirmPassword.required">Confirm Password must not be empty</span>
           <span class = "error_message"  v-if="!$v.confirmPassword.sameAs">entered password should match.</span>
         </div>
         <hr/>
-        <button class = "btn btn-primary" slot="btn" id="main-btn">Sign Up</button>
+        <button class = "btn btn-primary" slot="btn" id="main-btn" :disabled="$v.$invalid">Sign Up</button>
         <v-snackbar
             v-model="snackbar"
             :multi-line="multiLine"
@@ -131,6 +151,8 @@ import {
 export default {
   data() {
     return {
+      firstName : "",
+      lastName : "",
       email: "",
       password: "",
       phoneNumber: "",
@@ -139,14 +161,20 @@ export default {
       isSubmitted : false,
       multiLine: true,
       snackbar: false,
-      loginEmail:'',
-      loginPassword : ''
+      loginEmail:'default@gmail.com',
+      loginPassword : 'jgjyh'
     };
   },
   validations: {
     email: {
       required,
       email
+    },
+    firstName: {
+      required,
+    },
+    lastName: {
+      required,
     },
     phoneNumber: {
       required,
@@ -170,16 +198,27 @@ export default {
   methods: {
     openModal: function(idProp) {
       this.$bvModal.show(idProp);
+      this.$data.email = "";
+      this.$data.password = "";
+      this.$data.phoneNumber = "";
+      this.$data.confirmPassword = "";
+      this.$data.lastName = "";
+      this.$data.firstName = "";
     },
     submitSignUpForm() {
-      console.log('$v>>>>>>',this.$v);
       this.isSubmitted = true;
       if (!this.$v.$invalid) {
-        // this.$bvModal.hide('modal-center-signup');
+        const user = {
+          email: this.email,
+          firstName: this.firstName,
+          lastName: this.lastName,
+          password: this.password,
+          repeatPassword: this.repeatPassword
+        }
         this.snackbar = true;
-        this.$v.$reset();
-      }else{
-        this.$v.$touch();
+        // this.$v.$reset();
+        console.log('user>>>>>',user);
+        // this.$bvModal.hide('modal-center-signup');
       }
     },
     login() {
@@ -187,9 +226,7 @@ export default {
         // this.$bvModal.hide('modal-center-signup');
         this.snackbar = true;
         this.$v.$reset();
-      }else{
-          this.$v.$touch();
-        }
+      }
     }
   }
 };
