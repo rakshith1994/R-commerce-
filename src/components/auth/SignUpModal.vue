@@ -1,9 +1,9 @@
 <template>
 <div >
     <!-- <b-button v-b-modal.modal-center >{{title}}</b-button> -->
-  <b-modal id="modal-center-signin"  hide-footer centered title='Sign In'>
-      <slot></slot>
-     
+    <b-modal id="modal-center-signup" hide-footer  centered title='Sign Up'>
+    <slot></slot>
+    <slot name="btn"></slot>
   </b-modal>
 </div> 
 </template>
@@ -13,7 +13,7 @@
 export default {
     data(){
         return {
-            
+
         }
     }
 }

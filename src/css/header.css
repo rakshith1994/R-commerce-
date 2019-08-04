@@ -1,0 +1,24 @@
+input {
+    margin: 10px auto;
+    border: black;
+}
+  
+  .input.inValid input {
+    border: 1px solid #a94442;
+  }
+  
+  .input.inValid span {
+    color: 1px solid #a94442;
+  }
+
+  .input.inValid label {
+    color: 1px solid #a94442;
+  }
+  
+  .input.inValid label {
+    color: 1px solid rgb(255, 0, 0);
+  }
+  
+  #main-btn {
+    text-align: center;
+  }
