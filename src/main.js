@@ -6,13 +6,14 @@ import router from './router'
 import Vuetify from 'vuetify'
 import ApolloClient from 'apollo-boost'
 import VueApollo from 'vue-apollo'
-import Header from './components/Header'
+import Header from './components/header/Header.vue'
 import 'vuetify/dist/vuetify.min.css'
 import BootStrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
-import SignInModal from './components/SignInModal'
-import SignUpModal from './components/SignUpModal'
+import SignInModal from './components/auth/SignInModal.vue'
+import SignUpModal from './components/auth/SignUpModal'
+import Vuelidate from 'vuelidate'
 
 const apolloClient = new ApolloClient({
   // You should use an absolute URL here
@@ -24,6 +25,7 @@ const apolloProvider = new VueApollo({
 });
 
 Vue.config.productionTip = false;
+Vue.use(Vuelidate);
 Vue.use(BootStrapVue);
 Vue.use(Vuetify);
 Vue.use(VueApollo);
