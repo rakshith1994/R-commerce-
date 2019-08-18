@@ -2,7 +2,7 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import App from './App'
-import router from './router'
+import router from './router/router'
 import Vuetify from 'vuetify'
 import ApolloClient from 'apollo-boost'
 import VueApollo from 'vue-apollo'
@@ -14,6 +14,8 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import SignInModal from './components/auth/SignInModal.vue'
 import SignUpModal from './components/auth/SignUpModal'
 import Vuelidate from 'vuelidate'
+import Vuesax from 'vuesax'
+import 'vuesax/dist/vuesax.css' //Vuesax styles
 
 const apolloClient = new ApolloClient({
   // You should use an absolute URL here
@@ -27,14 +29,14 @@ const apolloProvider = new VueApollo({
 Vue.config.productionTip = false;
 Vue.use(Vuelidate);
 Vue.use(BootStrapVue);
-Vue.use(Vuetify);
 Vue.use(VueApollo);
+Vue.use(Vuetify);
+Vue.use(Vuesax)
 
 Vue.component('Header',Header);
 Vue.component('SignInModal',SignInModal);
 Vue.component('SignUpModal',SignUpModal);
 
-/* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
@@ -42,3 +44,4 @@ new Vue({
   components: { App },
   template: '<App/>'
 })
+/* eslint-disable no-new */

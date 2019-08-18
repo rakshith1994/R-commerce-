@@ -1,35 +1,6 @@
 <template>
   <div>
-    <SignInModal>
-      <form @submit.prevent = "login">
-        <div class = "input" :class = "{inValid: $v.loginEmail.$error}">
-          <label >Email Id:*</label>
-          <input 
-                name="email" 
-                class="form-control" 
-                type="email"
-                v-model="loginEmail"
-                @blur="$v.loginEmail.$touch()"
-                />
-            <span class = "error_message" v-if="!$v.loginEmail.email">Please provide the valid email address.</span>
-            <span class = "error_message" v-if="!$v.loginEmail.required">email is required</span>
-          </div>
-          <br />
-          <div class = "input" :class = "{inValid: $v.loginPassword.$error}">
-          <label >Password:*</label>
-          <input 
-                name="password" 
-                class="form-control" 
-                type="password"
-                v-model="loginPassword"
-                @blur="$v.loginPassword.$touch()"
-                />
-          <span class = "error_message"  v-if="!$v.loginPassword.required">password is required</span>
-        </div>
-      <hr/>
-      <button class = "btn btn-primary" :disabled="$v.$invalid">Sign In</button>
-      </form>
-    </SignInModal>
+    <SignInModal></SignInModal>
     <SignUpModal>
       <form @submit.prevent = "submitSignUpForm">
         <div class = "input" :class = "{inValid: $v.firstName.$error}">
@@ -38,7 +9,7 @@
                 type="firstName" 
                 class="form-control"
                 id = "firstName"
-                v-model.trim="firstName"
+                v-model.lazy="firstName"
                 @blur="$v.firstName.$touch()"/>
           <span class = "error_message" v-if="!$v.firstName.required">First Name must not be empty</span>
         </div>
@@ -49,9 +20,9 @@
                 type="lastName" 
                 class="form-control"
                 id = "lastName"
-                v-model.trim="lastName"
+                v-model.lazy="lastName"
                 @blur="$v.lastName.$touch()"/>
-          <span class = "error_message" v-if="!$v.firstName.required">Last Name must not be empty</span>
+          <span class = "error_message" v-if="!$v.lastName.required">Last Name must not be empty</span>
         </div>
         <br/>
         <div class = "input" :class = "{inValid: $v.email.$error}">
@@ -60,7 +31,7 @@
                 type="email" 
                 class="form-control"
                 id = "email"
-                v-model="email"
+                v-model.lazy="email"
                 @blur="$v.email.$touch()"/>
           <span class = "error_message" v-if="!$v.email.email">Please provide the valid email address.</span>
           <span class = "error_message" v-if="!$v.email.required">Email must not be empty</span>
@@ -72,9 +43,10 @@
                 type="tel" 
                 class="form-control"
                 id = "phoneNumber"
-                v-model="phoneNumber"
+                v-model.number="phoneNumber"
                 @blur="$v.phoneNumber.$touch()"/>
           <span class = "error_message"  v-if="!$v.phoneNumber.required">phone Number must not be empty</span>
+          <span class = "error_message"  v-if="!$v.phoneNumber.minLength">phoneNumber must be number with atleast {{$v.phoneNumber.$params.minLength.min}} digit.</span>
         </div>
         <br />
         <div class = "input">
@@ -99,7 +71,7 @@
                 type="password" 
                 class="form-control"
                 id = "password"
-                v-model="password"
+                v-model.lazy="password"
                 @blur="$v.password.$touch()"/>
           <span class = "error_message"  v-if="!$v.password.required">Password must not be empty</span>
           <span class = "error_message"  v-if="!$v.password.minLength">password length must be atleast {{$v.password.$params.minLength.min}}</span>
@@ -111,7 +83,7 @@
                 type="password" 
                 class="form-control"
                 id = "confirmPassword"
-                v-model="confirmPassword"
+                v-model.lazy="confirmPassword"
                 @blur="$v.confirmPassword.$touch()"/>
           <span class = "error_message"  v-if="!$v.confirmPassword.required">Confirm Password must not be empty</span>
           <span class = "error_message"  v-if="!$v.confirmPassword.sameAs">entered password should match.</span>
@@ -123,20 +95,22 @@
             :multi-line="multiLine"
             :timeout= 5000
           >
-          Hola! SignUp SuccessFull.
+          Hola! User Registered SuccessFull.
         </v-snackbar>
       </form>
     </SignUpModal>
-    <v-toolbar dark>
-      <v-toolbar-title>Logo Image</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-toolbar-items class="hidden-sm-and-down">
-        <v-btn v-on:click="openModal('modal-center-signin')">Sign In</v-btn>
-        <v-btn v-on:click="openModal('modal-center-signup')">Sign Up</v-btn>
-        <v-btn flat>
-          <v-icon>local_grocery_store</v-icon>
-        </v-btn>
-      </v-toolbar-items>
+    <v-toolbar>
+      <sideBar></sideBar>
+        <v-spacer></v-spacer>
+      <div>
+        <v-toolbar-items class="hidden-sm-and-down">
+          <v-btn v-on:click="openModal('modal-center-signin')">Sign In</v-btn>
+          <v-btn v-on:click="openModal('modal-center-signup')">Sign Up</v-btn>
+          <v-btn flat>
+            <v-icon>local_grocery_store</v-icon>
+          </v-btn>
+        </v-toolbar-items>
+      </div>
     </v-toolbar>
   </div>
 </template>
@@ -148,6 +122,9 @@ import {
   sameAs,
   minLength
 } from "vuelidate/lib/validators";
+import signin from "../auth/SignInModal"
+import sideBar from "../menu/menu"
+
 export default {
   data() {
     return {
@@ -187,13 +164,11 @@ export default {
     confirmPassword: {
       required,
       sameAs: sameAs("password")
-    },
-    loginEmail : {
-      required
-    },
-    loginPassword : {
-      required
     }
+  },
+  components : {
+    "SignInModel" : signin,
+    "sideBar" : sideBar,
   },
   methods: {
     openModal: function(idProp) {
@@ -220,43 +195,11 @@ export default {
         console.log('user>>>>>',user);
         // this.$bvModal.hide('modal-center-signup');
       }
-    },
-    login() {
-      if (!this.$v.$invalid) {
-        // this.$bvModal.hide('modal-center-signup');
-        this.snackbar = true;
-        this.$v.$reset();
-      }
     }
   }
 };
 </script>
 
 <style >
-  body{
-    font-family: monospace
-  }
-  
-  .error_message{
-    color : #a94442;
-  }
-  .input.inValid input {
-    border: 1px solid #a94442;
-  }
-  
-  .input.inValid span {
-    color: 1px solid #a94442;
-  }
-
-  .input.inValid label {
-    color: 1px solid #a94442;
-  }
-  
-  .input.inValid label {
-    color: 1px solid rgb(255, 0, 0);
-  }
-  
-  #main-btn {
-    text-align: center;
-  }
+@import "../../css/header.css";
 </style>
