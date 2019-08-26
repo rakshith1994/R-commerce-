@@ -1,0 +1,40 @@
+@media (min-width: 768px){
+   .login{
+       display: none; 
+   }
+}
+.logotitle{
+   color: white
+}
+@media (max-width: 768px){
+   .megaMenu{
+       width:100%;
+       margin: 0 auto;
+       text-align: center;
+   }
+}
+
+.vs-sidebar--item a:hover{
+   padding-left: 17px;
+   font-size: 28px;
+}
+.vs-sidebar--item{
+   padding: 4px;
+   margin: 17px 0 0 0;
+}
+.footer-sidebar{
+   display : flex;
+   align-items : center;
+   justify-content : space-between;
+   width : 100%;
+}
+.footer-sidebar > vs-button :hover{
+   background: none
+}
+.vs-button-primary.vs-button-flat:hover{
+   background: transparent !important
+}
+.logout{
+   align-items : center;
+   width :100%
+}
