@@ -16,6 +16,7 @@ import SignUpModal from './components/auth/SignUpModal'
 import Vuelidate from 'vuelidate'
 import Vuesax from 'vuesax'
 import 'vuesax/dist/vuesax.css' //Vuesax styles
+import Footer from "./components/footer/footer.vue"
 
 const apolloClient = new ApolloClient({
   // You should use an absolute URL here
@@ -34,6 +35,7 @@ Vue.use(Vuetify);
 Vue.use(Vuesax)
 
 Vue.component('Header',Header);
+Vue.component('Footer',Footer);
 Vue.component('SignInModal',SignInModal);
 Vue.component('SignUpModal',SignUpModal);
 

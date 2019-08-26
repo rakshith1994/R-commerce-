@@ -1,10 +1,10 @@
 <template>
     <div >
         <div class = "kids">
-            <header-component></header-component>
+            <Header></Header>
             <h1>Kids</h1>
         </div>
-        <footer-component></footer-component>
+        <Footer></Footer>
     </div>
 </template>
 <script>
@@ -16,10 +16,6 @@ export default {
         return {
 
         }
-    },
-    components : {
-        'header-component' : Header,
-        'footer-component' : Footer
     }
 }
 </script>

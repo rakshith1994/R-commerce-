@@ -6,6 +6,14 @@
 .logotitle{
    color: white
 }
+@media (max-width: 768px){
+   .megaMenu{
+       width:100%;
+       margin: 0 auto;
+       text-align: center;
+   }
+}
+
 .vs-sidebar--item a:hover{
    padding-left: 17px;
    font-size: 28px;

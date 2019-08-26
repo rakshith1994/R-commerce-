@@ -1,13 +1,15 @@
 <template>
-    <div>
-        <v-avatar 
-            color="black"
-            size="36" 
-            @click="active=!active" 
-        >
-        <v-toolbar-title class = "logotitle">R</v-toolbar-title>
-        </v-avatar>
-        <vs-sidebar parent="body" default-index="1"  color="primary" class="sidebarx" spacer v-model="active">
+    <div class = "megaMenu">
+        <router-link to = "/">
+            <v-avatar 
+                color="black"
+                size="36" 
+                @click="active=!active" 
+            >
+            <v-toolbar-title class = "logotitle">R</v-toolbar-title>
+            </v-avatar>
+        </router-link>  
+        <vs-sidebar parent="body" default-index="1"  color="primary" class="hidden-lg-only hidden-sm-only sidebarx" spacer v-model="active">
             <vs-sidebar-item index="1" icon="question_answer">
                 <!-- Dashboard -->
                 <router-link to = "/">Dashboard</router-link>

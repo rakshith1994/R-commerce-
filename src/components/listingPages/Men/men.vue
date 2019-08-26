@@ -1,15 +1,13 @@
 <template>
     <div >
         <div class = "men">
-            <header-component :name = "isSideBarActive"></header-component>
+            <Header></Header>
             <h1>Mens</h1>
         </div>
-        <footer-component></footer-component>
+        <Footer></Footer>
     </div>
 </template>
 <script>
-import Header from "../../header/Header"
-import Footer from "../../footer/footer"
 
 export default {
     props : [
@@ -22,10 +20,6 @@ export default {
     created() {
         console.log('created>>>>');
         console.log('created>>>>',this.props);
-    },
-    components : {
-        'header-component' : Header,
-        'footer-component' : Footer
     }
 }
 </script>
