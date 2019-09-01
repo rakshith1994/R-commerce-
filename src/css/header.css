@@ -33,6 +33,12 @@ ul > li > a {
   letter-spacing: 0.6px;
 } 
 
+.con-vs-avatar{
+  margin : 14px 0 0 0;
+  width: 49px;
+  height: 49px;
+}
+
 .megaMenuActive{
   display: block;
 }

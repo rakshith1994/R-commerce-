@@ -1,7 +1,7 @@
 <template>
 <div >
     <!-- <b-button v-b-modal.modal-center >{{title}}</b-button> -->
-    <b-modal id="modal-center-signup" hide-footer  centered title='Sign Up'>
+    <b-modal id="modal-center-signup" hide-footer  centered title='Register'>
     <slot></slot>
     <slot name="btn"></slot>
   </b-modal>
