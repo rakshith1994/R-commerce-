@@ -1,6 +1,6 @@
 <template>
   <div>
-    <SignInModal @userCredentialReset = "isLoggedIn = $event"></SignInModal>
+    <SignInModal @userIsLoggedIn = "isLoggedIn = $event"></SignInModal>
     <SignUpModal>
       <form @submit.prevent = "submitSignUpForm">
         <div class = "input" :class = "{inValid: $v.form.firstName.$error}">
@@ -102,6 +102,9 @@
         </div>
         <hr/>
         <button class = "btn btn-primary" slot="btn" id="main-btn" :disabled="$v.$invalid">Sign Up</button>
+        <div class = "createAccount" @click = "openLoginModal">
+          <span>Already have and account?</span><strong class = "registerlink"> Login</strong>
+        </div>
         <v-snackbar
             v-model="snackbar"
             :multi-line="multiLine"
@@ -122,7 +125,18 @@
             <v-icon>local_grocery_store</v-icon>
           </v-btn>
           <div class = "loginUser" v-if = isLoggedIn>
-               <vs-avatar  size="70px" src="https://randomuser.me/api/portraits/men/85.jpg"/>
+              <v-menu offset-y>
+                <template v-slot:activator="{ on }">
+                  <!-- <v-icon>mdiAccount</v-icon> -->
+                  <vs-avatar v-on="on" src="../../assets/icons8-user-rights-50.png"/>
+                  <!-- <vs-avatar v-on="on" src="https://randomuser.me/api/portraits/men/85.jpg"/> -->
+                </template>
+                <v-list>
+                  <v-list-item>
+                    <v-list-item-title>login user name</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
           </div>
         </v-toolbar-items>
       </div>
@@ -174,6 +188,8 @@ export default {
         {title : 'Womens',route : 'womens'},
         {title : 'Kids',route : 'kids'}
         ],
+      drawer: true,
+      mini: true,
       isSubmitted : false,
       multiLine: true,
       snackbar: false,
@@ -212,8 +228,12 @@ export default {
     "sideBar" : sideBar,
   },
   methods: {
-    openModal: function(idProp) {
+    openModal(idProp) {
       this.$bvModal.show(idProp);
+    },
+    openLoginModal() {
+      this.$bvModal.hide('modal-center-signup');
+      this.$bvModal.show('modal-center-signin');
     },
     resetForm() { 
         var self = this
