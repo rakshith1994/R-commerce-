@@ -4,7 +4,9 @@ import Vue from 'vue'
 import App from './App'
 import router from './router/router'
 import Vuetify from 'vuetify'
-import ApolloClient from 'apollo-boost'
+import { ApolloClient } from 'apollo-client'
+import { createHttpLink } from 'apollo-link-http'
+import { InMemoryCache } from 'apollo-cache-inmemory'
 import VueApollo from 'vue-apollo'
 import Header from './components/header/Header.vue'
 import 'vuetify/dist/vuetify.min.css'
@@ -18,14 +20,24 @@ import Vuesax from 'vuesax'
 import 'vuesax/dist/vuesax.css' //Vuesax styles
 import Footer from "./components/footer/footer.vue"
 
-const apolloClient = new ApolloClient({
+// HTTP connection to the API
+const httpLink = createHttpLink({
   // You should use an absolute URL here
-  uri: 'http://localhost:3000/graphql'
-});
+  uri: 'http://localhost:4000/graphql',
+})
+
+// Cache implementation
+const cache = new InMemoryCache()
+
+// Create the apollo client
+const apolloClient = new ApolloClient({
+  link: httpLink,
+  cache
+})
 
 const apolloProvider = new VueApollo({
   defaultClient: apolloClient,
-});
+})
 
 Vue.config.productionTip = false;
 Vue.use(Vuelidate);

@@ -155,19 +155,20 @@ import {
 } from "vuelidate/lib/validators";
 import signin from "../auth/SignInModal"
 import sideBar from "../menu/menu"
+import UserServices from '../../services/UserServices'
 
 export default {
   props :['isActive'],
   data() {
     return {
       form : {
-        firstName : "",
-        lastName : "",
-        email: "",
-        password: "",
-        phoneNumber: "",
-        gender: [],
-        confirmPassword: ""
+        firstName : "asdfg",
+        lastName : "asdfg",
+        email: "asdfgh@asdfg.com",
+        password: "asdfgh",
+        phoneNumber: "8908909098",
+        gender: 'male',
+        confirmPassword: "asdfgh"
       },
       megaMenuData : [
         {title : 'Mens',route : 'mens'},
@@ -237,11 +238,16 @@ export default {
           lastName: this.form.lastName,
           password: this.form.password,
           repeatPassword: this.form.repeatPassword
-        }
+        };
         this.snackbar = true;
-        this.resetForm();
+        // this.resetForm();
         // this.$v.$reset();
         console.log('user>>>>>',user);
+        UserServices.addUser(this.$apollo,user.email,user.password,this.form.confirmPassword,user.firstName).then((resp)=>{
+          console.log('resp',resp);
+        },(err)=>{
+          console.log('err',err);
+        })
         // this.$bvModal.hide('modal-center-signup');
       }
     }
