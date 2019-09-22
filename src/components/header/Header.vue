@@ -13,6 +13,7 @@
                 @blur="$v.form.firstName.$touch()"/>
           <template v-if="$v.form.firstName.$error">
             <span class = "error_message" v-if="!$v.form.firstName.required">First Name must not be empty</span>
+            <span class = "error_message" v-if="!$v.form.firstName.unique">Opps! UserName {{this.form.firstName}} already exists. Please try again.</span>
           </template>
         </div>
         <br/>
@@ -112,6 +113,13 @@
           >
           Hola! User Registered SuccessFull.
         </v-snackbar>
+        <v-snackbar
+            v-model="sessionOutSnackbar"
+            :multi-line="multiLine"
+            :timeout= 5000
+          >
+          TimeOut! Please login again.
+        </v-snackbar>
       </form>
     </SignUpModal>
     <v-toolbar>
@@ -128,14 +136,14 @@
               <v-menu offset-y>
                 <template v-slot:activator="{ on }">
                   <!-- <v-icon>mdiAccount</v-icon> -->
-                  <vs-avatar v-on="on" src="../../assets/icons8-user-rights-50.png"/>
+                  <vs-avatar v-on="on" src = "http://gravatar.com/avatar/+md5(this.form.firstName)+?d=identicon"/>
                   <!-- <vs-avatar v-on="on" src="https://randomuser.me/api/portraits/men/85.jpg"/> -->
                 </template>
-                <v-list>
+                <!-- <v-list>
                   <v-list-item>
                     <v-list-item-title>login user name</v-list-item-title>
                   </v-list-item>
-                </v-list>
+                </v-list> -->
               </v-menu>
           </div>
         </v-toolbar-items>
@@ -165,7 +173,8 @@ import {
   required,
   email,
   sameAs,
-  minLength
+  minLength,
+  helpers
 } from "vuelidate/lib/validators";
 import signin from "../auth/SignInModal"
 import sideBar from "../menu/menu"
@@ -176,7 +185,7 @@ export default {
   data() {
     return {
       form : {
-        firstName : "asdfg",
+        firstName : "",
         lastName : "asdfg",
         email: "asdfgh@asdfg.com",
         password: "asdfgh",
@@ -191,12 +200,20 @@ export default {
         ],
       drawer: true,
       mini: true,
+      sessionOutSnackbar : false,
       isSubmitted : false,
       multiLine: true,
       snackbar: false,
       isLoggedIn : false,
       isMegaMenuActive : false
     };
+  },
+  created() {
+    console.log('this.isSessionExpire>?>>>>>>>>>>',this.isSessionExpire);
+    this.isLoggedIn = this.isSessionExpire;
+  },
+  mounted(){
+    console.log('mounted this.isSessionExpire>?>>>>>>>>>>',this.isSessionExpire);
   },
   validations: {
     form : {
@@ -206,6 +223,15 @@ export default {
       },
       firstName: {
         required,
+        unique (value) {
+          if(!helpers.req(value)) return true;
+          return new Promise((resolve,reject) => {
+              this.$store.dispatch('getUserNameAvailable',{userName :this.form.firstName})
+              .then(result => resolve(result))
+              .catch(error => reject(error))
+          })
+          // this.isAvailable
+        }
       },
       lastName: {
         required,
@@ -227,6 +253,19 @@ export default {
   components : {
     "SignInModel" : signin,
     "sideBar" : sideBar,
+  },
+  computed: {
+    isSessionExpire(){
+      console.log('this.$store.getters.users>>>>>>>>>>>>>',this.$store.getters.isVerifiedAndLogin)
+      const user = this.$store.getters.isVerifiedAndLogin;
+      if(user){
+        console.log('user boolealn value>>>>>>>>>>>',user)
+        return user;
+      }else{
+        this.sessionOutSnackbar = true;
+        return user;
+      }
+    },
   },
   methods: {
     openModal(idProp) {
@@ -254,21 +293,22 @@ export default {
         this.isLoggedIn = true;
         const user = {
           email: this.form.email,
-          firstName: this.form.firstName,
-          lastName: this.form.lastName,
+          userName: this.form.firstName,
           password: this.form.password,
-          repeatPassword: this.form.repeatPassword
+          dob : "29/09/1996",
+          gender : "male"
         };
         this.snackbar = true;
-        // this.resetForm();
-        // this.$v.$reset();
         console.log('user>>>>>',user);
-        UserServices.addUser(this.$apollo,user.email,user.password,this.form.confirmPassword,user.firstName).then((resp)=>{
-          console.log('resp',resp);
-        },(err)=>{
-          console.log('err',err);
-        })
-        // this.$bvModal.hide('modal-center-signup');
+        this.$store.dispatch("handleRegistration",user)
+        .then(result => {
+          console.log('inside handle registration in header>>>>>>>>>',result);
+          this.$store.dispatch('handleLogin',{userName: this.form.firstName,password: this.form.password,})
+          .then(result => {
+            console.log('handling auto login>>>>>>>>>',result);
+            // this.$bvModal.hide('modal-center-signup');
+          }).catch(error => new Error(error));
+        }).catch(error => new Error(error));
       }
     }
   }

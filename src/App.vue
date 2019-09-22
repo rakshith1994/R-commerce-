@@ -5,11 +5,13 @@
 </template>
 
 <script>
+import {apolloClient} from './main'
 export default {
-  name: 'App'
+  name: 'App',
+  mounted(){
+    console.log('apolloClient in app>>>>>>>>>',apolloClient);
+  }
 }
 </script>
-
 <style>
-
 </style>

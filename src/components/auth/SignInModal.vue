@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-modal id="modal-center-signin" hide-footer centered title="Login">
-      <form @submit.prevent="login">
+      <form @submit.prevent = login>
         <div class="input" :class="{inValid: $v.form.loginEmail.$error}">
           <label :class = "{error_message: $v.form.loginEmail.$error}" >Email Id:*</label>
           <input
@@ -37,7 +37,8 @@
         <div class = "signUp">
           <button class="btn btn-primary" :disabled="$v.form.$invalid">Sign In</button>
         </div>
-        <v-snackbar v-model="snackbar" :multi-line="multiLine" :timeout="1000">Login SuccessFull.</v-snackbar>
+        <v-snackbar  v-model="loginSuccessSnackbar" :top="true" :multi-line="multiLine" :timeout="3000" >YaY! Login SuccessFull.</v-snackbar>
+        <v-snackbar  v-model="loginFailSnackbar" color= "error" :top="true" :multi-line="multiLine" :timeout="3000">inValid email or password. Please try again!</v-snackbar>
       </form>
       <div class = "forgotPassword" @click = "forgotPasswordLink"><strong>Forgot Password?</strong></div>
       <hr/>
@@ -52,6 +53,7 @@
 <script>
 import { required, email, sameAs, minLength } from "vuelidate/lib/validators";
 import forgotPassword from './forgotPassword';
+import {mapGetters} from 'vuex';
 
 export default {
   props : ['isUserLoggedIn'],
@@ -62,7 +64,8 @@ export default {
         loginPassword: ""
       },
       multiLine: true,
-      snackbar: false
+      loginSuccessSnackbar: false,
+      loginFailSnackbar : false
     };
   },
   validations: {
@@ -79,14 +82,23 @@ export default {
   methods: {
     login() {
       if (!this.$v.form.$invalid) {
-        // this.$bvModal.hide('modal-center-signup');
         console.log('props data in loginc form >>>>>>>',this);
-        this.$emit('userIsLoggedIn',true)
-        const loginData = {
-          userEmail : this.loginEmail,
-        }
-        this.snackbar = true;
-        this.$bvModal.hide('modal-center-signin');
+        var data = {
+          email : this.form.loginEmail,
+          password : this.form.loginPassword
+        };
+        this.$store.dispatch('handleLogin',data)
+        .then(result => {
+          this.$bvModal.hide('modal-center-signin');
+          this.$router.push('/')
+          this.$emit('userIsLoggedIn',true)
+          this.loginSuccessSnackbar = true;
+        })
+        .catch(err => {
+          this.loginFailSnackbar = true
+          this.$v.$touch();
+          console.log('this.$v>>>>>>',this.$v.form)
+        })
       }
     },
     openSignUpModal() {
@@ -104,6 +116,11 @@ export default {
         self.form[key] = "";
         self.$v.form[key].$invalid = true;
       });
+    }
+  },
+  computed : {
+    userLogin(){
+      return this.$store.state.isUserLoggedIn ? this.loginSuccessSnackbar = true : false;
     }
   },
   components : {

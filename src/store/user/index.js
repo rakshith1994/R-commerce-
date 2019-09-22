@@ -4,17 +4,17 @@ const state={
 }
 
 const getters={
-
+  
 }
 
 const mutations={
-
+  
 }
 
 const actions={
-addUserDetails:(payload)=>{
+  addUserDetails:(payload)=>{
 
-}
+  }
 }
 
 export default {
