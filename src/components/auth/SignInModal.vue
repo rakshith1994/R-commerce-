@@ -1,6 +1,8 @@
 <template>
   <div>
+
     <b-modal id="modal-center-signin" hide-footer centered title="Login">
+      <alert-message  v-if = "error" :errorMessage = "error.message"></alert-message>
       <form @submit.prevent = login>
         <div class="input" :class="{inValid: $v.form.loginEmail.$error}">
           <label :class = "{error_message: $v.form.loginEmail.$error}" >Email Id:*</label>
@@ -35,10 +37,12 @@
         </div>
         <hr />
         <div class = "signUp">
-          <button class="btn btn-primary" :disabled="$v.form.$invalid">Sign In</button>
+          <v-btn class="btn btn-primary" :loading = "loading" type = "submit" :disabled="$v.form.$invalid">
+            <span slot = "loader" class="custom-loader">
+              <v-icon light>cached</v-icon>
+            </span>
+           Sign In</v-btn>
         </div>
-        <v-snackbar  v-model="loginSuccessSnackbar" :top="true" :multi-line="multiLine" :timeout="3000" >YaY! Login SuccessFull.</v-snackbar>
-        <v-snackbar  v-model="loginFailSnackbar" color= "error" :top="true" :multi-line="multiLine" :timeout="3000">inValid email or password. Please try again!</v-snackbar>
       </form>
       <div class = "forgotPassword" @click = "forgotPasswordLink"><strong>Forgot Password?</strong></div>
       <hr/>
@@ -64,9 +68,11 @@ export default {
         loginPassword: ""
       },
       multiLine: true,
-      loginSuccessSnackbar: false,
-      loginFailSnackbar : false
     };
+  },
+  created() {
+    // this.isLoggedIn = this.isSessionExpire;
+    console.log('...mapGetters([users]) for global alert message>>>>>>>>',...mapGetters(['error']));
   },
   validations: {
     form: {
@@ -81,6 +87,7 @@ export default {
   },
   methods: {
     login() {
+      console.log('signin login button clicked>>>>>>>>>>>>>>>')
       if (!this.$v.form.$invalid) {
         console.log('props data in loginc form >>>>>>>',this);
         var data = {
@@ -89,21 +96,21 @@ export default {
         };
         this.$store.dispatch('handleLogin',data)
         .then(result => {
-          this.$bvModal.hide('modal-center-signin');
+          // this.$bvModal.hide('modal-center-signin');
           this.$router.push('/')
-          this.$emit('userIsLoggedIn',true)
-          this.loginSuccessSnackbar = true;
+          // this.$emit('userIsLoggedIn',true)
+          // router.go();
         })
         .catch(err => {
-          this.loginFailSnackbar = true
           this.$v.$touch();
-          console.log('this.$v>>>>>>',this.$v.form)
+          console.log('err in login method>>>>>>>>>>>',err)
         })
       }
     },
     openSignUpModal() {
       this.$bvModal.hide('modal-center-signin');
       this.$bvModal.show('modal-center-signup');
+      this.$store.commit('clearError',null);
     },
     forgotPasswordLink(){
       this.$bvModal.hide('modal-center-signin');
@@ -119,9 +126,7 @@ export default {
     }
   },
   computed : {
-    userLogin(){
-      return this.$store.state.isUserLoggedIn ? this.loginSuccessSnackbar = true : false;
-    }
+    ...mapGetters(['loading','error','users']),
   },
   components : {
     forgotPassword 
@@ -151,5 +156,48 @@ export default {
     .signUp > button {
       width: 100%;
       border-radius: 0px;
+      margin-left: 0;
+      background-color: #0069d9 !important;
+    }
+
+    .custom-loader {
+      animation: loader 1s infinite;
+      display: flex;
+    }
+
+    @-moz-keyframes loader {
+      from {
+        transform: rotate(0);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @-webkit-keyframes loader {
+      from {
+        transform: rotate(0);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @-o-keyframes loader {
+      from {
+        transform: rotate(0);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes loader {
+      from {
+        transform: rotate(0);
+      }
+      to {
+        transform: rotate(360deg);
+      }
     }
 </style>

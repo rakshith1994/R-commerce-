@@ -51,12 +51,8 @@ export const IS_VALID_USERNAME = gql`
  */
 export const SIGNUP_USER = gql`
     mutation($userName:String!,$password:String!,$email: String!,$dob: String!,$gender: String!){
-        signupUser(userName: $userName,password: $password,email: $email,dob: $dob,gender: $gender){
-            userName,
-            password,
-            email,
-            dob,
-            gender,
+        addUser(userName: $userName,password: $password,email: $email,dob: $dob,gender: $gender){
+            token
         }
     }
 `

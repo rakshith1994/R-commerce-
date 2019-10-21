@@ -1,13 +1,15 @@
 <template>
   <div>
-    <SignInModal @userIsLoggedIn = "isLoggedIn = $event"></SignInModal>
+    <SignInModal></SignInModal>
     <SignUpModal>
+      <alert-message  v-if = "error" :errorMessage = "error.message"></alert-message>
       <form @submit.prevent = "submitSignUpForm">
         <div class = "input" :class = "{inValid: $v.form.firstName.$error}">
           <label :class = "{error_message: $v.form.firstName.$error}">First Name:*</label>
           <input 
                 type="firstName" 
                 class="form-control"
+                :class = "{validUsername : !$v.form.firstName.$error}"
                 id = "firstName"
                 v-model.lazy="form.firstName"
                 @blur="$v.form.firstName.$touch()"/>
@@ -102,11 +104,18 @@
           </template>
         </div>
         <hr/>
-        <button class = "btn btn-primary" slot="btn" id="main-btn" :disabled="$v.$invalid">Sign Up</button>
-        <div class = "createAccount" @click = "openLoginModal">
-          <span>Already have and account?</span><strong class = "registerlink"> Login</strong>
+        <!-- <button class = "btn btn-primary" slot="btn" id="main-btn" :disabled="$v.$invalid">Sign Up</button> -->
+        <div class = "createAccount">
+        <v-btn class = "btn btn-primary" slot="btn" :loading = "loading" type = "submit" id="main-btn">
+            <span slot = "loader" class="custom-loader">
+              <v-icon light>cached</v-icon>
+            </span>
+          Sign Up</v-btn>
         </div>
-        <v-snackbar
+        <div class = "signin" @click = "openLoginModal">
+          <span>Already have and account?</span><strong> Login</strong>
+        </div>
+        <!-- <v-snackbar
             v-model="snackbar"
             :multi-line="multiLine"
             :timeout= 5000
@@ -114,12 +123,13 @@
           Hola! User Registered SuccessFull.
         </v-snackbar>
         <v-snackbar
+            @showSessionOutSnakbar = "sessionOutSnackbar = $event"
             v-model="sessionOutSnackbar"
             :multi-line="multiLine"
             :timeout= 5000
           >
-          TimeOut! Please login again.
-        </v-snackbar>
+          Opps! Something happend wrong. Session timeOut, Please login again.
+        </v-snackbar> -->
       </form>
     </SignUpModal>
     <v-toolbar>
@@ -132,18 +142,27 @@
           <v-btn flat>
             <v-icon>local_grocery_store</v-icon>
           </v-btn>
+          <!-- <v-btn flat>
+          <v-icon>presence-exit</v-icon>
+          </v-btn> -->
           <div class = "loginUser" v-if = isLoggedIn>
               <v-menu offset-y>
                 <template v-slot:activator="{ on }">
+                  <v-btn
+                    color="primary"
+                    v-on:click= "handleLogout"
+                  >
+                    logout
+                  </v-btn>
                   <!-- <v-icon>mdiAccount</v-icon> -->
                   <vs-avatar v-on="on" src = "http://gravatar.com/avatar/+md5(this.form.firstName)+?d=identicon"/>
                   <!-- <vs-avatar v-on="on" src="https://randomuser.me/api/portraits/men/85.jpg"/> -->
                 </template>
-                <!-- <v-list>
-                  <v-list-item>
-                    <v-list-item-title>login user name</v-list-item-title>
-                  </v-list-item>
-                </v-list> -->
+                <!-- <v-list> -->
+                  <!-- <v-list-item>
+                    <v-list-item-title> login user name </v-list-item-title>
+                  </v-list-item> -->
+                <!-- </v-list>  -->
               </v-menu>
           </div>
         </v-toolbar-items>
@@ -179,6 +198,7 @@ import {
 import signin from "../auth/SignInModal"
 import sideBar from "../menu/menu"
 import UserServices from '../../services/UserServices'
+import { mapGetters } from 'vuex'
 
 export default {
   props :['isActive'],
@@ -209,11 +229,8 @@ export default {
     };
   },
   created() {
-    console.log('this.isSessionExpire>?>>>>>>>>>>',this.isSessionExpire);
-    this.isLoggedIn = this.isSessionExpire;
-  },
-  mounted(){
-    console.log('mounted this.isSessionExpire>?>>>>>>>>>>',this.isSessionExpire);
+    // this.isLoggedIn = this.isSessionExpire;
+    console.log('...mapGetters([users])>>>>>>>>>>>>',...mapGetters(['users']))
   },
   validations: {
     form : {
@@ -225,11 +242,12 @@ export default {
         required,
         unique (value) {
           if(!helpers.req(value)) return true;
-          return new Promise((resolve,reject) => {
-              this.$store.dispatch('getUserNameAvailable',{userName :this.form.firstName})
-              .then(result => resolve(result))
-              .catch(error => reject(error))
-          })
+          return true;
+          //   return new Promise((resolve,reject) => {
+          //     this.$store.dispatch('getUserNameAvailable',{userName :this.form.firstName})
+          //     .then(result => resolve(result))
+          //     .catch(error => reject(error))
+          // })
           // this.isAvailable
         }
       },
@@ -255,17 +273,20 @@ export default {
     "sideBar" : sideBar,
   },
   computed: {
-    isSessionExpire(){
-      console.log('this.$store.getters.users>>>>>>>>>>>>>',this.$store.getters.isVerifiedAndLogin)
-      const user = this.$store.getters.isVerifiedAndLogin;
-      if(user){
-        console.log('user boolealn value>>>>>>>>>>>',user)
-        return user;
+    ...mapGetters(['loading','error','users']),
+  },
+  watch : {
+    users(value,newValue) {
+      if(value){
+        console.log('Yay! watcher called i think we have achive this bloody baster authenticaion and authorization wiht apollo graphQL>>>>>>>>>>>>>>>>>>>>>',value,newValue);
+        this.isLoggedIn = true;
       }else{
-        this.sessionOutSnackbar = true;
-        return user;
+        console.log('inside the watch after token expire>>>>>>>>>>>>>>>>>>>>>>>',value);
+        this.isLoggedIn = false;
+        // this.sessionOutSnackbar = true;
+        this.$router.push("/");
       }
-    },
+    }
   },
   methods: {
     openModal(idProp) {
@@ -290,7 +311,6 @@ export default {
     submitSignUpForm() {
       this.isSubmitted = true;
       if (!this.$v.$invalid) {
-        this.isLoggedIn = true;
         const user = {
           email: this.form.email,
           userName: this.form.firstName,
@@ -299,17 +319,20 @@ export default {
           gender : "male"
         };
         this.snackbar = true;
-        console.log('user>>>>>',user);
         this.$store.dispatch("handleRegistration",user)
         .then(result => {
-          console.log('inside handle registration in header>>>>>>>>>',result);
-          this.$store.dispatch('handleLogin',{userName: this.form.firstName,password: this.form.password,})
-          .then(result => {
-            console.log('handling auto login>>>>>>>>>',result);
-            // this.$bvModal.hide('modal-center-signup');
-          }).catch(error => new Error(error));
+          // this.$store.dispatch('handleLogin',{email: user.email,password: user.password})
+          // .then(result => {
+          //   console.log('handling auto login>>>>>>>>>',result);
+            this.isLoggedIn = true
+            this.$bvModal.hide('modal-center-signup');
+          // }).catch(error => new Error(error));
         }).catch(error => new Error(error));
       }
+    },
+    handleLogout(){
+      console.log('inside handleLogout>>>>>>>>>>>>>');
+      this.$store.dispatch("handleLogout");
     }
   }
 };

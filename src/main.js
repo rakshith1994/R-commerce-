@@ -22,6 +22,7 @@ import 'vuesax/dist/vuesax.css' //Vuesax styles
 import Footer from "./components/footer/footer.vue"
 import store from './store/index'
 import { setContext } from 'apollo-link-context'
+import alertMessage from './components/AlertMessage/alertMessage.vue'
 
 // HTTP connection to the API
 export const httpLink = createHttpLink({
@@ -64,14 +65,23 @@ export const apolloClient = new ApolloClient({
   link: authLink.concat(httpLink),
   // link: httpLink,
   cache,
-  onError : ({graphQlErrors, networkError}) => {
+  onError : ({graphQLErrors, networkError}) => {
+    console.log('argumentts in errror for graphql>>>>>>>>>',graphQLErrors, networkError);
     if(networkError){
-      throw new Error(networkError)
+      console.log('graphQl networkError error>>>>>>',error);
+      // throw new Error(networkError)
     }
 
-    if(graphQlErrors){
-      for(let error of graphQlErrors){
-        throw new Error(err);
+    if(graphQLErrors){
+      console.log('graphQlErrors<>>>>>>>>>>>',graphQLErrors);
+      for(let error of graphQLErrors){
+        console.dir('graphQl error>>>>>>',error);
+        if(error.name === "AuthenticationError"){
+          console.log('inside if graphQl error>>>>>>',error);
+          store.commit('setAuthError',error)
+          store.dispatch("handleLogout");
+        }
+        // throw new Error(err);
       }
     }
   }
@@ -90,6 +100,7 @@ Vue.use(Vuesax)
 
 Vue.component('Header',Header);
 Vue.component('Footer',Footer);
+Vue.component('alert-message',alertMessage);
 Vue.component('SignInModal',SignInModal);
 Vue.component('SignUpModal',SignUpModal);
 
@@ -99,17 +110,6 @@ new Vue({
   apolloProvider,
   store,
   components: { App },
-  created() {
-    this.$store.dispatch('getCurrentUser')
-    .then(result => {
-      console.log('result in handling the session for login>>>>>>>',result);
-    }).catch(error => {
-      // this.$emit('sessionOut',true);
-      localStorage.setItem('token','');
-      this.$bvModal.show('modal-center-signin');
-      console.log('error in handling the session>>>>>>>',error);
-    })
-  },
   template: '<App/>'
 })
 /* eslint-disable no-new */
