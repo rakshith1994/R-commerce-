@@ -33,6 +33,12 @@ ul > li > a {
   letter-spacing: 0.6px;
 } 
 
+.con-vs-avatar{
+  margin: 14px 41px 0px 0px;
+  width: 39px;
+  height: 39px;
+}
+
 .megaMenuActive{
   display: block;
 }
@@ -48,6 +54,7 @@ li:hover{
   border: 1px solid #a94442;
 }
 
+
 .input.inValid span {
   color: 1px solid #a94442;
 }
@@ -61,5 +68,22 @@ li:hover{
 }
 
 #main-btn {
+  text-align: center;
+}
+
+.input > .validUsername{
+  border: 1px rgb(167, 255, 167) #a94442 !important;
+}
+
+.createAccount > button{
+  width: 100%;
+  border-radius: 0px;
+  margin-left: 0;
+  background-color: #0069d9 !important;
+}
+
+.signin{
+  margin: 0 auto;
+  margin-top: 12px;
   text-align: center;
 }
