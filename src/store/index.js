@@ -108,7 +108,7 @@ export default new Vuex.Store({
          */
         handleLogin : (context,payload) => {
             return new Promise((resolve,reject) => {
-                context.commit('setLoading',true);
+                context.commit('setLoading',true);  
                 context.commit('clearError',null);
                 localStorage.setItem('token','');
                 apolloClient.mutate({
@@ -148,8 +148,8 @@ export default new Vuex.Store({
                 }).then((result) => {
                     context.commit('setLoading',false);
                     console.log('result in register user>>>>>>>',result);
-                    context.commit('signupUsers',result.data.addUser)
                     localStorage.setItem('token',result.data.addUser.token);
+                    context.commit('signupUsers',result.data.addUser);
                     context.commit('userLoggedIn',true);
                     router.go(); 
                     resolve(result);
