@@ -56,7 +56,7 @@
                 @blur="$v.form.phoneNumber.$touch()"/>
           <template v-if="$v.form.phoneNumber.$error">
             <span class = "error_message"  v-if="!$v.form.phoneNumber.required">phone Number must not be empty</span>
-            <span class = "error_message"  v-if="!$v.form.phoneNumber.minLength">phoneNumber must be number with atleast {{$v.phoneNumber.$params.minLength.min}} digit.</span>
+            <span class = "error_message"  v-if="!$v.form.phoneNumber.minLength">phoneNumber must be number with atleast {{$v.form.phoneNumber.$params.minLength.min}} digit.</span>
           </template>
         </div>
         <br />
@@ -86,7 +86,7 @@
                 @blur="$v.form.password.$touch()"/>
           <template v-if="$v.form.password.$error">
             <span class = "error_message"  v-if="!$v.form.password.required">Password must not be empty</span>
-            <span class = "error_message"  v-if="!$v.form.password.minLength">password length must be atleast {{$v.password.$params.minLength.min}}</span>
+            <span class = "error_message"  v-if="!$v.form.password.minLength">password length must be atleast {{$v.form.password.$params.minLength.min}}</span>
           </template>
         </div>
         <br />
@@ -146,25 +146,35 @@
           <v-icon>presence-exit</v-icon>
           </v-btn> -->
           <div class = "loginUser" v-if = isLoggedIn>
-              <v-menu offset-y>
-                <template v-slot:activator="{ on }">
-                  <v-btn
+                  <!-- <v-btn
                     color="primary"
                     v-on:click= "handleLogout"
                   >
                     logout
-                  </v-btn>
+                  </v-btn> -->
                   <!-- <v-icon>mdiAccount</v-icon> -->
-                  <vs-avatar v-on="on" src = "http://gravatar.com/avatar/+md5(this.form.firstName)+?d=identicon"/>
+                  <!-- <vs-avatar v-on="on" src = "http://gravatar.com/avatar/+md5(this.form.firstName)+?d=identicon"/> -->
+                  <vs-avatar src = "http://gravatar.com/avatar/md5+{this.form.firstName}+?d=identicon"/>
                   <!-- <vs-avatar v-on="on" src="https://randomuser.me/api/portraits/men/85.jpg"/> -->
-                </template>
                 <!-- <v-list> -->
                   <!-- <v-list-item>
                     <v-list-item-title> login user name </v-list-item-title>
                   </v-list-item> -->
                 <!-- </v-list>  -->
-              </v-menu>
           </div>
+          <v-btn text small v-if = isLoggedIn @click="handleLogout">signout</v-btn>
+        <!-- <template>
+          <v-container fluid>
+            <v-row align="center">
+              <v-col class="d-flex" cols="12" sm="6">
+                <v-select
+                  :items="items"
+                  label="Standard"
+                ></v-select>
+              </v-col>
+            </v-row>
+          </v-container>
+        </template> -->
         </v-toolbar-items>
       </div>
     </v-toolbar>
@@ -173,13 +183,13 @@
           <template v-for="(item, index) in megaMenuData" >
             <li :key="index" @mouseover = "handleMouseOver" @mouseleave = "handleMouseLeave">
                 <router-link :to = item.route >{{item.title}}</router-link>
-                <div :class = "{'isMegaMenuActive' : isMegaMenuActive}">
+                <!-- <div :class = "{'isMegaMenuActive' : isMegaMenuActive}">
                   <div v-show="isMegaMenuActive">
                     <ul>
                       <li>sdsdsdsdsd</li>
                     </ul>
                   </div>
-                </div>
+                </div> -->
             </li>
           </template>
         </ul>
@@ -225,7 +235,8 @@ export default {
       multiLine: true,
       snackbar: false,
       isLoggedIn : false,
-      isMegaMenuActive : false
+      isMegaMenuActive : false,
+      items : ['hiu','fdfd','fdfdfd','89uih']
     };
   },
   created() {

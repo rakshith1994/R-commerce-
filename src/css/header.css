@@ -5,7 +5,7 @@ body{
 ul{
   margin: 0px auto;
   padding: 0px 0px;
-  /* padding-left: 38.5em; */
+  padding-left: 38.5em;
   display: inline-block;
   position: relative;
   width: 100%;
@@ -34,7 +34,7 @@ ul > li > a {
 } 
 
 .con-vs-avatar{
-  margin: 14px 41px 0px 0px;
+  margin: 14px 8px 0px 0px;
   width: 39px;
   height: 39px;
 }
