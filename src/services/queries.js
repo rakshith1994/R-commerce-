@@ -56,3 +56,29 @@ export const SIGNUP_USER = gql`
         }
     }
 `
+/** 
+ Fetch Collection data query
+*/
+
+export const GET_COLLECTION_DATA= gql`
+    query{
+        getCollection{
+            id,
+            product{
+                    name
+                    price{
+                        inr
+                        usd
+                    }
+                    brand
+                    shippingCost
+                    imgUrl
+                    dispatchTime
+                    childSku{
+                            size
+                            color
+                        }
+                }
+        }
+    }
+`

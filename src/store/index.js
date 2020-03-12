@@ -4,7 +4,7 @@ import user from './user';
 import {apolloClient} from '../main'
 import router from '../router/router'
 import gql from 'graphql-tag'
-import {GET_USERS , SIGNIN_USER , SIGNUP_USER, GET_CURRENT_USERS , IS_VALID_USERNAME} from '../services/queries'
+import {GET_USERS , SIGNIN_USER , SIGNUP_USER, GET_CURRENT_USERS , IS_VALID_USERNAME,GET_COLLECTION_DATA} from '../services/queries'
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -17,7 +17,7 @@ export default new Vuex.Store({
         isUserLoggedIn : false,
         userNameAvailable : "",
         error : null,
-        setAuthError : null
+        setAuthError : null,
     },
     mutations : {
         /**
@@ -49,7 +49,9 @@ export default new Vuex.Store({
 
         setLoading : (state,payload) => state.loading = payload,
 
-        setAuthError : (state,payload) => state.setAuthError = payload
+        setAuthError : (state,payload) => state.setAuthError = payload,
+
+        setCollectionsData :(state,payload) => {state.collectionData = payload.data.getCollection;}
 
     },
     getters : {
@@ -57,7 +59,8 @@ export default new Vuex.Store({
         isUserLoggedIn : state => state.isUserLoggedIn,
         error : state => state.error,
         loading : state => state.loading,
-        setAuthError : state => state.setAuthError
+        setAuthError : state => state.setAuthError,
+        getCollData: state => state.collectionData
     },
     actions : {
 
@@ -193,6 +196,35 @@ export default new Vuex.Store({
             context.commit('clearUser',null);
             localStorage.setItem('token','');
             apolloClient.resetStore();
+        },
+
+        /**
+         * Fetches collection data.
+         * @param {*} {context} we can access all commit and states and dispatch in context 
+         * saving the data back to vuex state.
+         * @param {*} payload
+         */
+        GET_COLLECTION_DATA: (context,payload)=>{
+            return new Promise((resolve,reject)=>{
+                apolloClient.query({
+                    query: GET_COLLECTION_DATA
+                }).then((result)=>{
+                    context.commit('setCollectionsData',result);
+                    resolve(result);
+                }).catch((e)=>{
+                    reject(e);
+                })
+            })
+           
+        },
+
+        ADD_TO_CART: (context,payload)=>{
+        if(payload.isUserLoggedIn){
+            return new Promise((resolve,reject)=>{
+
+            })
+        }
+
         }
     }
     // modules:{

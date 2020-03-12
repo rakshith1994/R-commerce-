@@ -7,7 +7,7 @@ ul{
   padding: 0px 0px;
   padding-left: 38.5em;
   display: inline-block;
-  position: relative;
+  /* position: relative; */
   width: 100%;
   left: 0;
   background-color: #f5f5f5;

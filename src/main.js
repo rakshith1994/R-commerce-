@@ -72,8 +72,8 @@ export const apolloClient = new ApolloClient({
       // throw new Error(networkError)
     }
 
-    if(graphQLErrors){
-      console.log('graphQlErrors<>>>>>>>>>>>',graphQLErrors);
+      if(graphQLErrors){
+        console.log('graphQlErrors<>>>>>>>>>>>',graphQLErrors);
       for(let error of graphQLErrors){
         console.dir('graphQl error>>>>>>',error);
         if(error.name === "AuthenticationError"){

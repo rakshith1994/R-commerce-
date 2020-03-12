@@ -132,17 +132,18 @@
         </v-snackbar> -->
       </form>
     </SignUpModal>
-    <v-toolbar>
-      <sideBar></sideBar>
+    <v-toolbar flat>
+      <!-- <sideBar></sideBar> -->
         <v-spacer></v-spacer>
       <div>
-        <v-toolbar-items class="hidden-sm-and-down">
-          <v-btn v-if = !isLoggedIn v-on:click="openModal('modal-center-signin')">Sign In</v-btn>
-          <v-btn v-if = !isLoggedIn v-on:click="openModal('modal-center-signup')">Sign Up</v-btn>
-          <v-btn flat>
-            <v-icon>local_grocery_store</v-icon>
-          </v-btn>
+        <v-toolbar-items  class="hidden-sm-and-down">
+          <v-btn flat v-if = !isLoggedIn v-on:click="openModal('modal-center-signin')">Sign In</v-btn>
+          <v-btn flat v-if = !isLoggedIn v-on:click="openModal('modal-center-signup')">Sign Up</v-btn>
           <!-- <v-btn flat>
+            <v-icon>local_grocery_store</v-icon>
+          </v-btn> -->
+          <CartDropdown></CartDropdown>         
+          <!-- <v-btn flat></v-btn>
           <v-icon>presence-exit</v-icon>
           </v-btn> -->
           <div class = "loginUser" v-if = isLoggedIn>
@@ -151,7 +152,7 @@
                     v-on:click= "handleLogout"
                   >
                     logout
-                  </v-btn> -->
+                  </v-icon> -->
                   <!-- <v-icon>mdiAccount</v-icon> -->
                   <!-- <vs-avatar v-on="on" src = "http://gravatar.com/avatar/+md5(this.form.firstName)+?d=identicon"/> -->
                   <vs-avatar src = "http://gravatar.com/avatar/md5+{this.form.firstName}+?d=identicon"/>
@@ -180,9 +181,9 @@
     </v-toolbar>
       <div class = "hidden-xs-only megaMenu">
         <ul>
-          <template v-for="(item, index) in megaMenuData" >
+          <template v-for="(item, index) in collection" >
             <li :key="index" @mouseover = "handleMouseOver" @mouseleave = "handleMouseLeave">
-                <router-link :to = item.route >{{item.title}}</router-link>
+                <router-link :to = item.id >{{item.id}}</router-link>
                 <!-- <div :class = "{'isMegaMenuActive' : isMegaMenuActive}">
                   <div v-show="isMegaMenuActive">
                     <ul>
@@ -206,12 +207,13 @@ import {
   helpers
 } from "vuelidate/lib/validators";
 import signin from "../auth/SignInModal"
-import sideBar from "../menu/menu"
+import CartDropdown from '../cart/CartDropdown';
+// import sideBar from "../menu/menu"
 import UserServices from '../../services/UserServices'
 import { mapGetters } from 'vuex'
 
 export default {
-  props :['isActive'],
+  props :['isActive','productAddedToCart'],
   data() {
     return {
       form : {
@@ -223,11 +225,6 @@ export default {
         gender: 'male',
         confirmPassword: "asdfgh"
       },
-      megaMenuData : [
-        {title : 'Mens',route : 'mens'},
-        {title : 'Womens',route : 'womens'},
-        {title : 'Kids',route : 'kids'}
-        ],
       drawer: true,
       mini: true,
       sessionOutSnackbar : false,
@@ -236,12 +233,18 @@ export default {
       snackbar: false,
       isLoggedIn : false,
       isMegaMenuActive : false,
-      items : ['hiu','fdfd','fdfdfd','89uih']
+      items : ['hiu','fdfd','fdfdfd','89uih'],
+      collection:this.$store.state.collectionData
     };
   },
   created() {
+    this.$store.subscribe((mutation,state)=>{
+    this.collection = state.collectionData;
+    console.log('dddd',this.collection);
+    });
     // this.isLoggedIn = this.isSessionExpire;
-    console.log('...mapGetters([users])>>>>>>>>>>>>',...mapGetters(['users']))
+    console.log('...mapGetters([users])>>>>>>>>>>>>',...mapGetters(['users','getCollData']));
+
   },
   validations: {
     form : {
@@ -281,7 +284,8 @@ export default {
   },
   components : {
     "SignInModel" : signin,
-    "sideBar" : sideBar,
+    CartDropdown
+    // "sideBar" : sideBar,
   },
   computed: {
     ...mapGetters(['loading','error','users']),
@@ -297,6 +301,9 @@ export default {
         // this.sessionOutSnackbar = true;
         this.$router.push("/");
       }
+    },
+    getCollData(newVal,oldVal){
+      // console.log('nw');
     }
   },
   methods: {

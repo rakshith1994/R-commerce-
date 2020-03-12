@@ -28,10 +28,9 @@ export default {
       }
     },
     computed: {
-      ...mapGetters(['setAuthError','users']),
+      ...mapGetters(['setAuthError','users','getCollData']),
     },
     watch : {
-
       users(newValue,oldValue) {
         console.log('outside the watch for snackbar login>>>>>>',newValue,oldValue.length);
         if(newValue){
@@ -46,9 +45,8 @@ export default {
           this.authErrorSnackbar = true;
         }else{
           console.log('inside else error value in setAuthError>>>>>>>>',value,typeof value);
-
         }
-      }
+      },
     },
     
     /**
@@ -67,6 +65,10 @@ export default {
         // this.$bvModal.show('modal-center-signin'); 
         this.$emit('showSessionOutSnakbar',true);
         throw new Error(error)
+      })
+
+      this.$store.dispatch('GET_COLLECTION_DATA').then((result)=>{
+        console.log('resulttt----',result);
       })
   },
 }
